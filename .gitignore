@@ -1,0 +1,10 @@
+build
+mbedtls
+mcuboot
+modules
+nrf
+nrfxlib
+test
+tools
+venv
+zephyr

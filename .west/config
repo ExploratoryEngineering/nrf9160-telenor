@@ -1,0 +1,4 @@
+[manifest]
+path = manifest
+[zephyr]
+base = zephyr
