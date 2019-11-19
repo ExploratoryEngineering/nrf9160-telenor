@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cortex-debug",
+            "request": "launch",
+            "preLaunchTask": "flash",
+            "servertype": "jlink",
+            "cwd": "${workspaceRoot}",
+            "name": "Debug with J-Link",
+            "executable": "${workspaceRoot}/build/zephyr/zephyr.elf",
+            "device": "nRF9160",
+            "interface": "jtag",
+        }
+    ]
+}

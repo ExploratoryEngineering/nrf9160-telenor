@@ -1,0 +1,48 @@
+{
+    "version": "2.0.0",
+    "command": "west",
+    "presentation": { "echo": true },
+    "type": "shell",
+    "options": {
+        "cwd": "${workspaceRoot}"
+    },
+
+    "tasks": [
+        {
+            "label": "build hello_world",
+            "args": [
+                "build",
+                "-p",
+                "auto",
+                "-b",
+                "nrf9160_pca10090ns",
+                "samples/hello_world"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "flash",
+            "args": [
+                "flash"
+            ],
+        },
+        {
+            "label": "pristine",
+            "args": [
+                "build",
+                "-t",
+                "pristine"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "start debugserver",
+            "args": [
+                "debugserver",
+                "--build-dir",
+                "build"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}
