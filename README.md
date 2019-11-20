@@ -6,6 +6,7 @@ This repository includes a few sample applications to help get you started with 
 
 1. Install dependencies as explained in [nRF9160 DK getting started](https://docs.nbiot.engineering/tutorials/nrf9160-basic.html)
 1. `git clone ...` (insert this project's URL)
+1. `brew install libgit2`
 1. `./setup.sh`
 
 ## Build and run samples
