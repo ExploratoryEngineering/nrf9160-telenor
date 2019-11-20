@@ -25,6 +25,7 @@
             "args": [
                 "flash"
             ],
+            "problemMatcher": []
         },
         {
             "label": "pristine",
