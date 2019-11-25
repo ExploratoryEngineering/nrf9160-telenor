@@ -3,9 +3,6 @@
 set -e 
 
 # cleanup
-if [ -d "venv" ]; then
-    ./venv/bin/deactivate
-fi
 rm -rf venv
 
 if [ -d "nrf" ]; then
