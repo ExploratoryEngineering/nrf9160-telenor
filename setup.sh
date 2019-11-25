@@ -2,16 +2,20 @@
 
 set -e 
 
-cd "$(dirname "$0")"
-
 # cleanup
-deactivate || echo "Virtualenv not active"
+if [ -d "venv" ]; then
+    ./venv/bin/deactivate
+fi
 rm -rf venv
-git checkout -- nrf/scripts/requirements.txt
+
+if [ -d "nrf" ]; then
+    git checkout -- nrf/scripts/requirements.txt
+fi
+
 # rm -rf ~/Library/Caches/zephyr/ToolchainCapabilityDatabase
 
 # create a new virtual env
-virtualenv venv
+virtualenv -p python3 venv
 source venv/bin/activate
 
 # install west in the venv
