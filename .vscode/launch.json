@@ -4,7 +4,7 @@
         {
             "type": "cortex-debug",
             "request": "launch",
-            "preLaunchTask": "flash",
+            "preLaunchTask": "",
             "servertype": "jlink",
             "cwd": "${workspaceRoot}",
             "name": "Debug with J-Link",
