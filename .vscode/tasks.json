@@ -38,15 +38,6 @@
                 "pristine"
             ],
             "problemMatcher": []
-        },
-        {
-            "label": "start debugserver",
-            "args": [
-                "debugserver",
-                "--build-dir",
-                "build"
-            ],
-            "problemMatcher": []
         }
     ]
 }
