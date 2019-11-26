@@ -6,7 +6,9 @@ set -e
 rm -rf venv
 
 if [ -d "nrf" ]; then
-    git checkout -- nrf/scripts/requirements.txt
+    cd deps/nrf
+    git checkout -- deps/nrf/scripts/requirements.txt
+    cd ../..
 fi
 
 # rm -rf ~/Library/Caches/zephyr/ToolchainCapabilityDatabase
@@ -22,9 +24,9 @@ pip3 install west
 west update
 
 # hack until nrfutil v6 is released
-sed -i -e "s/^nrfutil$/nrfutil>=6.0.0a1/" nrf/scripts/requirements.txt
+sed -i -e "s/^nrfutil$/nrfutil>=6.0.0a1/" deps/nrf/scripts/requirements.txt
 
 # install python dependencies
-pip3 install --no-cache-dir -r zephyr/scripts/requirements.txt
-pip3 install --no-cache-dir -r nrf/scripts/requirements.txt
-pip3 install --no-cache-dir -r mcuboot/scripts/requirements.txt
+pip3 install --no-cache-dir -r deps/zephyr/scripts/requirements.txt
+pip3 install --no-cache-dir -r deps/nrf/scripts/requirements.txt
+pip3 install --no-cache-dir -r deps/mcuboot/scripts/requirements.txt
