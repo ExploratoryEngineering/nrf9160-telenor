@@ -1,0 +1,12 @@
+menu "Application"
+
+module = APP
+module-dep = LOG
+module-str = Log level for application
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu
+
+menu "Zephyr Kernel"
+source "$ZEPHYR_BASE/Kconfig.zephyr"
+endmenu
