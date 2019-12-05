@@ -11,18 +11,41 @@ version conflicts of dependencies, we recommend installing the pip dependencies
 locally in the project using a virtualenv.
 
 * [nRF Connect for desktop](https://www.nordicsemi.com/Software-and-tools/Development-Tools/nRF-Connect-for-desktop) v3.3.0 (or newer)
-    * Open the Getting started assistant
+    * Install and open the Getting started assistant
     * Follow all the steps in «Install the toolchain»
 
 * Install virtualenv 16.7.0 (or newer)
 
-```sh
-    # check version
-    virtualenv --version
+    ```sh
+        # check version
+        virtualenv --version
     
-    # install/upgrade virtualenv
-    pip3 install virtualenv -U
-```
+        # install/upgrade virtualenv
+        pip3 install virtualenv -U
+    ```
+
+* Set environment variables
+    * Windows (make sure the path to gnuarmemb is correct)
+
+        ```bat
+            setx ZEPHYR_TOOLCHAIN_VARIANT gnuarmemb
+            setx GNUARMEMB_TOOLCHAIN_PATH C:\gnuarmemb
+        ````
+    
+    * MacOS
+
+        ```sh
+            echo "export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb" >> ~/.profile
+            echo "export GNUARMEMB_TOOLCHAIN_PATH=/usr/local/opt/gcc-arm-none-eabi" >> ~/.profile
+        ```
+    
+    * Linux
+
+        ```sh
+            # depends on your distro
+            echo "export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb" >> ~/.profile
+            echo "export GNUARMEMB_TOOLCHAIN_PATH=/usr" >> ~/.profile
+        ```
 
 * MacOS only
     * Install libgit2
@@ -30,13 +53,40 @@ locally in the project using a virtualenv.
         `brew install libgit2`
 
 
-## Setup
+## Setup MacOS/Linux
 
 1. `git clone ...` (insert this project's URL)
 1. `./setup.sh`
 
-## Build and run samples
+## Build and run samples MacOS/Linux
 
-1. `source venv/bin/activate`
-1. `west build samples/hello_world`
-1. `west flash`
+1. `source venv/bin/activate` # activate the python virtualenv
+1. `west build samples/hello_world` # build the hello world sample
+1. `west flash` # flash the nrf9160 with the built binary
+
+
+## Setup Windows PowerShell
+
+1. `git clone ...` (insert this project's URL)
+1. `.\setup.ps1`
+
+## Build and run samples Windows PowerShell
+
+1. `source .\venv\Scripts\activate` # activate the python virtualenv
+1. `west build .\samples\hello_world` # build the hello world sample
+1. `west flash` # flash the nrf9160 with the built binary
+
+
+## Troubleshooting
+
+### Delete the build folder
+
+Very often when a build fails, some files are left in the `build/` folder which confuses subsequent builds. Try to delete the `build/` folder and build again.
+
+### Clear Zephyr toolchain capability cache
+
+Sometimes when changing dependency versions, the cache can cause build errors.
+Deleting it doesn't do any damage, it just increases the build time on the next
+build.
+
+    rm -rf ~/Library/Caches/zephyr/ToolchainCapabilityDatabase
