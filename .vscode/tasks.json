@@ -18,8 +18,20 @@
                 "-p",
                 "auto",
                 "-b",
-                "nrf9160_pca10090ns",
+                "@",
                 "samples/hello_world"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "build fota",
+            "args": [
+                "build",
+                "-p",
+                "auto",
+                "-b",
+                "nrf9160_pca10090ns",
+                "samples/fota"
             ],
             "problemMatcher": []
         },
