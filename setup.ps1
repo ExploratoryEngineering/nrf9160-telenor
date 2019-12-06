@@ -47,6 +47,7 @@ Try {
     Exec { pip install --no-cache-dir -r deps\zephyr\scripts\requirements.txt }
     Exec { pip install --no-cache-dir -r deps\nrf\scripts\requirements.txt }
     Exec { pip install --no-cache-dir -r deps\mcuboot\scripts\requirements.txt }
+    Exec { pip install --no-cache-dir -r scripts\requirements.txt }
 
 } Catch {
     # tell the caller it has all gone wrong

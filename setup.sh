@@ -22,3 +22,4 @@ python scripts/fix-nrf-requirements.py
 pip install --no-cache-dir -r deps/zephyr/scripts/requirements.txt
 pip install --no-cache-dir -r deps/nrf/scripts/requirements.txt
 pip install --no-cache-dir -r deps/mcuboot/scripts/requirements.txt
+pip install --no-cache-dir -r scripts/requirements.txt
