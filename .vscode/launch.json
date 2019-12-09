@@ -11,6 +11,13 @@
             "executable": "${workspaceRoot}/build/zephyr/zephyr.elf",
             "device": "nRF9160",
             "interface": "jtag",
+            "showDevDebugOutput": false,
+            "overrideLaunchCommands": [
+                // override to skip flashing firmware - which messes up mcuboot
+                `interpreter-exec console "monitor halt"`,
+                `interpreter-exec console "monitor reset"`,
+                `enable-pretty-printing`
+            ],
         }
     ]
 }
