@@ -44,7 +44,7 @@ int fota_settings_init() {
 		return err;
 	}
 
-	err = settings_load();
+	err = settings_load_subtree("fota");
 	if (err) {
 		LOG_ERR("settings_load: %d", err);
 		return err;

@@ -1,9 +1,7 @@
 #include <zephyr.h>
 #include <logging/log.h>
 #include <dfu/mcuboot.h>
-#include <dfu/flash_img.h>
-#include <flash.h>
-#include <logging/log_ctrl.h>
+#include <dfu/dfu_target.h>
 #include <misc/reboot.h>
 #include <modem_info.h>
 #include <net/lwm2m.h>
@@ -65,12 +63,32 @@ static int firmware_block_received_cb(u16_t obj_inst_id, u16_t res_id, u16_t res
 
 	static u32_t bytes_downloaded;
 	static u8_t percent_downloaded;
-	static struct flash_img_context dfu_ctx;
 
 	int ret;
 
 	if (bytes_downloaded == 0) {
-		flash_img_init(&dfu_ctx);
+		int img_type = dfu_target_img_type(data, data_len);
+		if (img_type < 0) {
+			LOG_ERR("dfu_target_img_type: %d", img_type);
+			return img_type;
+		}
+
+		const char *img_type_str = "";
+		switch (img_type) {
+		case DFU_TARGET_IMAGE_TYPE_MCUBOOT:
+			img_type_str = " MCUBoot";
+			break;
+		case DFU_TARGET_IMAGE_TYPE_MODEM_DELTA:
+			img_type_str = " modem delta";
+			break;
+		}
+		LOG_INF("Started downloading%s image", img_type_str);
+
+		ret = dfu_target_init(img_type, total_size);
+		if (ret) {
+			LOG_ERR("dfu_target_init(%d, %d): %d", img_type, total_size, ret);
+			return ret;
+		}
 
 #ifndef CONFIG_IMG_ERASE_PROGRESSIVELY
 		ret = boot_erase_img_bank(FLASH_AREA_IMAGE_SECONDARY);
@@ -92,9 +110,9 @@ static int firmware_block_received_cb(u16_t obj_inst_id, u16_t res_id, u16_t res
 		LOG_INF("%d%%", percent_downloaded);
 	}
 
-	ret = flash_img_buffered_write(&dfu_ctx, data, data_len, last_block);
+	ret = dfu_target_write(data, data_len);
 	if (ret) {
-		LOG_ERR("flash_img_buffered_write: %d", ret);
+		LOG_ERR("dfu_target_write: %d", ret);
 		goto cleanup;
 	}
 
@@ -104,11 +122,24 @@ static int firmware_block_received_cb(u16_t obj_inst_id, u16_t res_id, u16_t res
 		goto cleanup;
 	}
 
+	if (last_block) {
+		ret = dfu_target_done(true);
+		if (ret) {
+			LOG_ERR("dfu_target_done(true): %d", ret);
+			goto cleanup;
+		}
+	}
+
 	return 0;
 
 cleanup:
 	bytes_downloaded = 0;
 	percent_downloaded = 0;
+
+	int done_ret = dfu_target_done(false);
+	if (done_ret) {
+		LOG_ERR("dfu_target_done(false): %d", done_ret);
+	}
 
 	return ret;
 }
@@ -152,6 +183,7 @@ static int init_image() {
 
 		// If we are updating but have booted into a confirmed image, it means
 		// the test reboot failed and we have reverted to the old image.
+		// TODO: Do a different check when updating modem firmware.
 		if (boot_is_img_confirmed()) {
 			LOG_ERR("Firmware update failed");
 			lwm2m_engine_set_u8("5/0/5", RESULT_UPDATE_FAILED);
@@ -174,27 +206,39 @@ static int init_image() {
 static char endpoint_name[20];
 
 static int init_endpoint_name() {
-	char imei[15] = {0};
-
 	int err = modem_info_init();
 	if (err) {
 		LOG_ERR("modem_info_init: %d", err);
 		return err;
 	}
 
+	char imei[15] = {0};
 	int len = modem_info_string_get(MODEM_INFO_IMEI, imei);
 	if (len <= 0) {
 		LOG_ERR("read IMEI: %d", len);
 		return len;
 	}
-
 	snprintf(endpoint_name, sizeof(endpoint_name), "nrf-%s", imei);
+
+	char fw_version[MODEM_INFO_MAX_RESPONSE_SIZE] = {0};
+	len = modem_info_string_get(MODEM_INFO_FW_VERSION, fw_version);
+	if (len <= 0) {
+		LOG_ERR("read firmware version: %d", len);
+		return len;
+	}
+	LOG_INF("Modem firmware version: %s", log_strdup(fw_version));
 
 	return 0;
 }
 
 int fota_init() {
-	int ret = init_lwm2m_resources();
+	int ret = fota_settings_init();
+	if (ret) {
+		LOG_ERR("fota_settings_init: %d", ret);
+		return ret;
+	}
+
+	ret = init_lwm2m_resources();
 	if (ret) {
 		LOG_ERR("init_lwm2m_resources: %d", ret);
 		return ret;
