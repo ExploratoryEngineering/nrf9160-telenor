@@ -5,9 +5,8 @@ if(NOT DEFINED BOARD)
 endif()
 
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
-project(telenor_fota)
+include(../../CMakeLists.txt)
 
-target_sources(app PRIVATE src/main.c)
-target_sources(app PRIVATE src/fota.c)
-target_sources(app PRIVATE src/settings.c)
+project(app)
 zephyr_include_directories(src)
+zephyr_library_sources(src/main.c)

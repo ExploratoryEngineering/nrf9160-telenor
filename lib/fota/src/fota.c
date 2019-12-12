@@ -7,7 +7,7 @@
 #include <net/lwm2m.h>
 #include <stdio.h>
 
-#include "fota.h"
+#include <fota/fota.h>
 #include "settings.h"
 
 LOG_MODULE_REGISTER(app_fota, CONFIG_APP_LOG_LEVEL);
