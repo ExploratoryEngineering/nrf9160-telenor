@@ -1,0 +1,5 @@
+config TELENOR_FOTA
+	bool "Use the Telenor FOTA library"
+	default n
+	help
+	  Use the Telenor firmware over the air (FOTA) library.

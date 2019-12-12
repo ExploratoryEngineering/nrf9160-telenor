@@ -1,3 +1,5 @@
+if(CONFIG_TELENOR_FOTA)
+
 zephyr_library_named(telenor_fota)
 zephyr_include_directories(include)
 zephyr_library_sources(
@@ -5,3 +7,5 @@ zephyr_library_sources(
     src/settings.c
 )
 zephyr_link_libraries(telenor_fota)
+
+endif()
