@@ -1,0 +1,45 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[pipenv]
+allow_prereleases = true
+
+[dev-packages]
+
+[packages]
+west = ">=0.6.2"
+windows-curses = {version = "*",sys_platform = "== 'win32'"}
+breathe = "==4.9.1"
+colorama = "*"
+docutils = "==0.14"
+gcovr = "*"
+git-spindle = "==2.0"
+gitlint = "*"
+junit2html = "*"
+ply = "==3.10"
+pyelftools = "==0.24"
+pykwalify = "*"
+pyocd = "==0.21.0"
+pyserial = "*"
+pytest = "*"
+sphinx-rtd-theme = "*"
+sphinx-tabs = "*"
+sphinxcontrib-svg2pdfconverter = "*"
+Pillow = "*"
+PyYAML = ">=3.13"
+IntelHex = "*"
+Sphinx = "==1.7.5"
+recommonmark = "==0.4.0"
+sphinxcontrib-mscgen = "*"
+ecdsa = "*"
+nrfutil = "*"
+pygit2 = "~=0.28.2"
+editdistance = "~=0.5.0"
+cryptography = "~=2.6"
+click = "*"
+imgtool = "~=1.4.0"
+
+[requires]
+python_version = "3.7"

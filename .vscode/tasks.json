@@ -1,13 +1,11 @@
 {
     "version": "2.0.0",
-    "command": "./venv/bin/west",
+    "command": "pipenv",
+    "args": ["run", "west"],
     "presentation": { "echo": true },
     "type": "shell",
     "options": {
         "cwd": "${workspaceRoot}",
-        "env": {
-            "PATH": "${workspaceRoot}/venv/bin:${env:PATH}"
-        }
     },
 
     "tasks": [

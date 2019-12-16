@@ -14,14 +14,10 @@ locally in the project using a virtualenv.
     * Install and open the Getting started assistant
     * Follow all the steps in «Install the toolchain»
 
-* Install virtualenv 16.7.0 (or newer)
+* Install pipenv
 
     ```sh
-        # check version
-        virtualenv --version
-    
-        # install/upgrade virtualenv
-        pip3 install virtualenv -U
+        pip3 install pipenv
     ```
 
 * Set environment variables
@@ -53,28 +49,23 @@ locally in the project using a virtualenv.
         `brew install libgit2`
 
 
-## Setup MacOS/Linux
+## Setup MacOS/Linux/Windows
 
-1. `git clone ...` (insert this project's URL)
-1. `./setup.sh`
+1. `git clone https://github.com/ExploratoryEngineering/nrf9160-telenor`
+1. `pipenv install` # install python dependencies in projects virtualenv
+1. `pipenv run west update` # download the Zephyr dependencies using west
 
 ## Build and run samples MacOS/Linux
 
-1. `source venv/bin/activate` # activate the python virtualenv
+1. `pipenv shell` # activate the projects virtualenv
 1. `west build samples/hello_world` # build the hello world sample
 1. `west flash` # flash the nrf9160 with the built binary
 
 _Note: The default board is the nRF9160 Development Kit. If you want to build and upload to another nrf9160-based board, you have to add `-b <board-name>` for the build command above. So to build for the Thingy:91, the command would be: `west build -b nrf9160_pca20035ns samples/hello_world`_
 
-
-## Setup Windows PowerShell
-
-1. `git clone ...` (insert this project's URL)
-1. `.\setup.ps1`
-
 ## Build and run samples Windows PowerShell
 
-1. `source .\venv\Scripts\activate` # activate the python virtualenv
+1. `pipenv shell` # activate the projects virtualenv
 1. `west build .\samples\hello_world` # build the hello world sample
 1. `west flash` # flash the nrf9160 with the built binary
 

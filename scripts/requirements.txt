@@ -1,1 +1,1 @@
-imgtool>=1.4.0
+imgtool~=1.4.0
