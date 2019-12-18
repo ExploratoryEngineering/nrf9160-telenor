@@ -6,9 +6,10 @@ using the nRF9160 with the Telenor.
 ## Prerequesites
 
 Nordic Semiconductors have chosen Zephyr for firmware development on the
-nRF9160. The build tool for Zephyr relies on python, so to avoid potential
-version conflicts of dependencies, we recommend installing the pip dependencies
-locally in the project using a virtualenv.
+nRF9160. The build tool for Zephyr relies on python. To produce a determnistic
+build, we've created a Pipfile for [pipenv][1] with all the pip dependencies
+from the [different][2] [Zephyr][3] [repositories][4]. Currently it's based on
+[nRF Connect SDK][5] v1.1.0.
 
 * [nRF Connect for desktop](https://www.nordicsemi.com/Software-and-tools/Development-Tools/nRF-Connect-for-desktop) v3.3.0 (or newer)
     * Install and open the Getting started assistant
@@ -146,3 +147,9 @@ Deleting it doesn't do any damage, it just increases the build time on the next
 build.
 
     rm -rf ~/Library/Caches/zephyr/ToolchainCapabilityDatabase
+
+[1]: https://pipenv-fork.readthedocs.io/en/latest/
+[2]: https://github.com/NordicPlayground/fw-nrfconnect-nrf/blob/master/scripts/requirements.txt
+[3]: https://github.com/NordicPlayground/fw-nrfconnect-zephyr/blob/master/scripts/requirements.txt
+[4]: https://github.com/NordicPlayground/fw-nrfconnect-mcuboot/blob/master/scripts/requirements.txt
+[5]: https://github.com/NordicPlayground/fw-nrfconnect-zephyr
