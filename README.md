@@ -15,6 +15,8 @@ from the [different][2] [Zephyr][3] [repositories][4]. Currently it's based on
     * Install and open the Getting started assistant
     * Follow all the steps in «Install the toolchain»
 
+* [nRF Command Line Tools](https://www.nordicsemi.com/Software-and-tools/Development-Tools/nRF-Command-Line-Tools) v10.5.0 (or newer)
+
 * Install pipenv
 
     ```sh
