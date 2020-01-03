@@ -12,7 +12,7 @@ jobs:
     - name: Install Homebrew
       run: /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     - name: Install brew dependencies
-      run: brew install libgit2
+      run: brew bundle
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
