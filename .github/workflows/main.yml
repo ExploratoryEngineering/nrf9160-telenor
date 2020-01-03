@@ -6,6 +6,8 @@ jobs:
   build:
 
     runs-on: macos-latest
+    env:
+      ZEPHYR_TOOLCHAIN_VARIANT: gnuarmemb
 
     steps:
     - uses: actions/checkout@v2
@@ -24,3 +26,9 @@ jobs:
         pipenv install
     - name: Install west dependencies
       run: pipenv run west update
+    - name: Locate arm-none-eabi-gcc
+      run: ls -lap /usr/local/bin/arm-none-eabi-gcc
+    - name: Build hello-world sample
+      env:
+        GNUARMEMB_TOOLCHAIN_PATH: /usr/local/Cellar/gcc-arm-none-eabi-83/20190709
+      run: pipenv run west build samples/hello_world
