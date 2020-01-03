@@ -1,5 +1,14 @@
+menu "Telenor FOTA"
+
+module = TELENOR_FOTA
+module-dep = LOG
+module-str = Log level for Telenor FOTA
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
 config TELENOR_FOTA
 	bool "Use the Telenor FOTA library"
 	default n
 	help
 	  Use the Telenor firmware over the air (FOTA) library.
+
+endmenu

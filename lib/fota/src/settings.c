@@ -4,7 +4,7 @@
 
 #include "settings.h"
 
-LOG_MODULE_REGISTER(app_settings, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_REGISTER(telenor_fota, CONFIG_TELENOR_FOTA_LOG_LEVEL);
 
 static bool updating;
 
