@@ -1,14 +1,12 @@
 name: CI
-
 on: [push, pull_request]
+env:
+  ZEPHYR_TOOLCHAIN_VARIANT: gnuarmemb
+  macOS: /usr/local/Cellar/gcc-arm-none-eabi-83/20190709
 
 jobs:
-  build:
-
+  build_hello_world_macos:
     runs-on: macos-latest
-    env:
-      ZEPHYR_TOOLCHAIN_VARIANT: gnuarmemb
-
     steps:
     - uses: actions/checkout@v2
     - name: Install Homebrew
@@ -26,9 +24,8 @@ jobs:
         pipenv install
     - name: Install west dependencies
       run: pipenv run west update
-    - name: Locate arm-none-eabi-gcc
-      run: ls -lap /usr/local/bin/arm-none-eabi-gcc
-    - name: Build hello-world sample
+    - name: Build hello_world sample
       env:
-        GNUARMEMB_TOOLCHAIN_PATH: /usr/local/Cellar/gcc-arm-none-eabi-83/20190709
+        GNUARMEMB_TOOLCHAIN_PATH: ${{ env[runner.os] }}
       run: pipenv run west build samples/hello_world
+    
