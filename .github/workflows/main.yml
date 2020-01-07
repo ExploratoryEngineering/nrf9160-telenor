@@ -1,0 +1,84 @@
+name: CI
+on: 
+  push:
+  pull_request:
+  schedule:
+  # minute hour day-of-month month day-of-week
+  - cron:  '0 * * * *'
+
+env:
+  ZEPHYR_TOOLCHAIN_VARIANT: gnuarmemb
+  GNUARMEMB_TOOLCHAIN_PATH_macOS: /usr/local/Cellar/gcc-arm-none-eabi-83/20190709
+  GNUARMEMB_TOOLCHAIN_PATH_Linux: /opt/gcc-arm-none-eabi-8-2019-q3-update
+  GNUARMEMB_TOOLCHAIN_PATH_Windows: C:\gnuarmemb
+
+jobs:
+  build_samples:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install macOS dependencies
+      if: runner.os == 'macOS'
+      run: brew bundle
+
+    - name: Install Linux dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt install wget file ninja-build gperf ccache dfu-util make gdb-multiarch xz-utils
+        # install device-tree-compiler
+        wget http://mirrors.kernel.org/ubuntu/pool/main/d/device-tree-compiler/device-tree-compiler_1.4.7-1_amd64.deb
+        sudo dpkg -i device-tree-compiler_1.4.7-1_amd64.deb
+        # install cmake
+        sudo wget -P /opt -nv https://github.com/Kitware/CMake/releases/download/v3.16.2/cmake-3.16.2-Linux-x86_64.tar.gz
+        sudo tar zxf /opt/cmake-3.16.2-Linux-x86_64.tar.gz -C /opt
+        sudo ln -s /opt/cmake-3.16.2-Linux-x86_64/bin/* /usr/local/sbin
+        cmake --version
+        # gcc-arm-none-eabi
+        sudo wget -P /opt -nv https://developer.arm.com/-/media/Files/downloads/gnu-rm/8-2019q3/RC1.1/gcc-arm-none-eabi-8-2019-q3-update-linux.tar.bz2
+        sudo tar jxf /opt/gcc-arm-none-eabi-8-2019-q3-update-linux.tar.bz2 -C /opt
+
+    - name: Install Windows dependencies
+      if: runner.os == 'Windows'
+      run: |
+        choco install -y cmake --installargs 'ADD_CMAKE_TO_PATH=System' --no-progress
+        choco install ninja dtc-msys2 gperf --no-progress
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest https://developer.arm.com/-/media/Files/downloads/gnu-rm/8-2019q3/RC1.1/gcc-arm-none-eabi-8-2019-q3-update-win32.zip -OutFile gcc-arm-win32.zip
+        7z x -bd -oC:\gnuarmemb .\gcc-arm-win32.zip
+        
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+
+    - name: Install pipenv
+      run: |
+        python -m pip install --upgrade pip
+        pip3 install pipenv
+
+    - name: Install Python dependencies
+      run: pipenv install
+
+    - name: Install west dependencies
+      run: pipenv run west update
+
+    - name: Build hello_world sample
+      env:
+        GNUARMEMB_TOOLCHAIN_PATH: ${{ env[format('GNUARMEMB_TOOLCHAIN_PATH_{0}', runner.os)] }}
+      run: |
+        pushd samples/hello_world
+        pipenv run west build
+        popd
+    
+    - name: Build fota sample
+      env:
+        GNUARMEMB_TOOLCHAIN_PATH: ${{ env[format('GNUARMEMB_TOOLCHAIN_PATH_{0}', runner.os)] }}
+      run: |
+        pushd samples/fota
+        pipenv run west build
+        popd
+  
