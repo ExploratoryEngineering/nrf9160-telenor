@@ -1,5 +1,11 @@
 name: CI
-on: [push, pull_request]
+on: 
+  push:
+  pull_request:
+  schedule:
+  # minute hour day-of-month month day-of-week
+  - cron:  '0 * * * *'
+
 env:
   ZEPHYR_TOOLCHAIN_VARIANT: gnuarmemb
   GNUARMEMB_TOOLCHAIN_PATH_macOS: /usr/local/Cellar/gcc-arm-none-eabi-83/20190709
