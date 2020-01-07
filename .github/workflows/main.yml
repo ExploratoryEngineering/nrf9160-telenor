@@ -7,7 +7,7 @@ env:
   GNUARMEMB_TOOLCHAIN_PATH_Windows: C:\gnuarmemb
 
 jobs:
-  build_hello_world:
+  build_samples:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -63,5 +63,16 @@ jobs:
     - name: Build hello_world sample
       env:
         GNUARMEMB_TOOLCHAIN_PATH: ${{ env[format('GNUARMEMB_TOOLCHAIN_PATH_{0}', runner.os)] }}
-      run: pipenv run west build samples/hello_world
+      run: |
+        pushd samples/hello_world
+        pipenv run west build
+        popd
+    
+    - name: Build fota sample
+      env:
+        GNUARMEMB_TOOLCHAIN_PATH: ${{ env[format('GNUARMEMB_TOOLCHAIN_PATH_{0}', runner.os)] }}
+      run: |
+        pushd samples/fota
+        pipenv run west build
+        popd
   
