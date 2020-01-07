@@ -1,4 +1,4 @@
-name: CI
+name: Build Samples
 on: 
   push:
   pull_request:
