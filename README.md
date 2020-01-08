@@ -3,6 +3,8 @@
 This repository includes a few sample applications to help get you started with
 using the nRF9160 with the Telenor.
 
+![](https://github.com/ExploratoryEngineering/nrf9160-telenor/workflows/Build%20Samples/badge.svg)
+
 ## Prerequesites
 
 Nordic Semiconductors have chosen Zephyr for firmware development on the
