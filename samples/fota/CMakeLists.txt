@@ -9,5 +9,4 @@ project(telenor_fota)
 
 target_sources(app PRIVATE src/main.c)
 target_sources(app PRIVATE src/fota.c)
-target_sources(app PRIVATE src/settings.c)
 zephyr_include_directories(src)

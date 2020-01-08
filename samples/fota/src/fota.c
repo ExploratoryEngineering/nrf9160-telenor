@@ -5,10 +5,10 @@
 #include <misc/reboot.h>
 #include <modem_info.h>
 #include <net/lwm2m.h>
+#include <settings/settings.h>
 #include <stdio.h>
 
 #include "fota.h"
-#include "settings.h"
 
 LOG_MODULE_REGISTER(app_fota, CONFIG_APP_LOG_LEVEL);
 
@@ -16,22 +16,61 @@ LOG_MODULE_REGISTER(app_fota, CONFIG_APP_LOG_LEVEL);
 #define FLASH_AREA_IMAGE_SECONDARY PM_MCUBOOT_SECONDARY_ID
 #define FLASH_BANK_SIZE            PM_MCUBOOT_SECONDARY_SIZE
 
-// This is the manufacturer reported by the LwM2M client. It is an
-// arbitrary string and will be exposed through the Horde API.
-#define CLIENT_MANUFACTURER "Exploratory Engineering"
+static bool updating;
 
-// This is the model number reported by the LwM2M client. It is an arbitrary
-// string and will be exposed by the Horde API.
-#define CLIENT_MODEL_NUMBER "EE-FOTA-00"
+static int handle_setting_set(const char *key, size_t len_rd, settings_read_cb read_cb, void *cb_arg) {
+	if (!key) {
+		return -ENOENT;
+	}
 
-// This is the serial number reported by the LwM2M client. If you have some
-// kind of serial number available you can use that, otherwise use the IMEI (the
-// ID for the cellular modem) or IMSI (The ID of the SIM in use).
-#define CLIENT_SERIAL_NUMBER "1"
+	if (strcmp(key, "updating") == 0) {
+		int len = read_cb(cb_arg, &updating, sizeof(updating));
+		if (len < sizeof(updating)) {
+			LOG_ERR("read updating state");
+			updating = false;
+		}
 
-// This is the version of the firmware. This must match the versions set on the
-// images uploaded via the Horde API (at https://api.nbiot.engineering/)
-#define CLIENT_FIRMWARE_VER "1.0.0"
+		return 0;
+	}
+
+	return -ENOENT;
+}
+
+static struct settings_handler fota_settings = {
+	.name = "fota",
+	.h_set = handle_setting_set,
+};
+
+static int settings_init() {
+	int err = settings_subsys_init();
+	if (err) {
+		LOG_ERR("settings_subsys_init: %d", err);
+		return err;
+	}
+
+	err = settings_register(&fota_settings);
+	if (err) {
+		LOG_ERR("settings_register: %d", err);
+		return err;
+	}
+
+	err = settings_load_subtree("fota");
+	if (err) {
+		LOG_ERR("settings_load: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
+static bool fota_updating() {
+	return updating;
+}
+
+static int fota_set_updating(bool updating_) {
+	updating = updating_;
+	return settings_save_one("fota/updating", &updating, sizeof(updating));
+}
 
 static struct k_delayed_work reboot_work;
 
@@ -161,13 +200,11 @@ cleanup:
 	return ret;
 }
 
-static int init_lwm2m_resources() {
-	LOG_INF("Firmware version: %s", CLIENT_FIRMWARE_VER);
-	LOG_INF("Model number:     %s", CLIENT_MODEL_NUMBER);
-	LOG_INF("Serial numbera:   %s", CLIENT_SERIAL_NUMBER);
-	LOG_INF("Manufacturer:     %s", CLIENT_MANUFACTURER);
-
-	LOG_INF("This is the new version of the firmware!");
+static int init_lwm2m_resources(fota_client_info client_info) {
+	LOG_INF("Firmware version: %s", client_info.firmware_version);
+	LOG_INF("Model number:     %s", client_info.model_number);
+	LOG_INF("Serial numbera:   %s", client_info.serial_number);
+	LOG_INF("Manufacturer:     %s", client_info.manufacturer);
 
 	char *server_url;
 	u16_t server_url_len;
@@ -194,10 +231,10 @@ static int init_lwm2m_resources() {
 	k_delayed_work_init(&reboot_work, do_reboot);
 	lwm2m_firmware_set_update_cb(firmware_update_cb);
 
-	lwm2m_engine_set_res_data("3/0/0", CLIENT_MANUFACTURER, sizeof(CLIENT_MANUFACTURER), LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_res_data("3/0/1", CLIENT_MODEL_NUMBER, sizeof(CLIENT_MODEL_NUMBER), LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_res_data("3/0/2", CLIENT_SERIAL_NUMBER, sizeof(CLIENT_SERIAL_NUMBER), LWM2M_RES_DATA_FLAG_RO);
-	lwm2m_engine_set_res_data("3/0/3", CLIENT_FIRMWARE_VER, sizeof(CLIENT_FIRMWARE_VER), LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_engine_set_res_data("3/0/0", client_info.manufacturer, strlen(client_info.manufacturer), LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_engine_set_res_data("3/0/1", client_info.model_number, strlen(client_info.model_number), LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_engine_set_res_data("3/0/2", client_info.serial_number, strlen(client_info.serial_number), LWM2M_RES_DATA_FLAG_RO);
+	lwm2m_engine_set_res_data("3/0/3", client_info.firmware_version, strlen(client_info.firmware_version), LWM2M_RES_DATA_FLAG_RO);
 
 	return 0;
 }
@@ -260,14 +297,14 @@ static int init_endpoint_name() {
 	return 0;
 }
 
-int fota_init() {
-	int ret = fota_settings_init();
+int fota_init(fota_client_info client_info) {
+	int ret = settings_init();
 	if (ret) {
 		LOG_ERR("fota_settings_init: %d", ret);
 		return ret;
 	}
 
-	ret = init_lwm2m_resources();
+	ret = init_lwm2m_resources(client_info);
 	if (ret) {
 		LOG_ERR("init_lwm2m_resources: %d", ret);
 		return ret;
