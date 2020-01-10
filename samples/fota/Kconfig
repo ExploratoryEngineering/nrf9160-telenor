@@ -11,6 +11,11 @@ module-dep = LOG
 module-str = Log level for application
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
+module = FOTA
+module-dep = LOG
+module-str = Log level for FOTA
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
 endmenu
 
 menu "Zephyr Kernel"
