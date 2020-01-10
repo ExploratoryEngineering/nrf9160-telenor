@@ -13,6 +13,9 @@ void main() {
 		firmware_version: CONFIG_APP_FIRMWARE_VERSION,
 	};
 
+	// Initialize the application and run any self-tests before calling fota_init.
+	// Otherwise, if initialization or self-tests fail after an update, reboot the system and the previous firmware image will be used.
+
 	int ret = fota_init(client_info);
 	if (ret) {
 		LOG_ERR("fota_init: %d", ret);
