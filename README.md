@@ -1,18 +1,26 @@
 # Telenor nrf9160 samples
 
-This repository includes a few sample applications to help get you started with
-using the nRF9160 with the Telenor.
+This repository includes a few sample applications to help get you started with using the nRF9160 with the [Telenor IoT Gateway][7] which, as of January 2020, is only enabled for Telenor Norway.
+
+**Samples included**
+- hello_world - Get device online and send `Hello, World!`
+- fota - Bare bones example of [Firmware Over The Air][8] updates
+
+## Development Environment
+
+At the time of the writing, concise and reliable instructions for setting up one's development environment were hard to come by. To reduce the barrier of entry into the IoT market, we've tried to simplify the setup process.
+
+Nordic Semiconductors have chosen Zephyr for firmware development on the nRF9160. The build tool for Zephyr relies on python and many pip dependencies. To produce a determnistic build, we've created a Pipfile for [pipenv][1] with
+all the pip dependencies from the [different][2] [Zephyr][3] [repositories][4]. Currently it's based on [nRF Connect SDK][5] **v1.1.0**.
 
 ![](https://github.com/ExploratoryEngineering/nrf9160-telenor/workflows/Build%20Samples/badge.svg)
 
+You are welcome to follow Nordic's [instructions][6] for setting up the nRF Connect SDK, but we beleive our instuctions are easier and more reliable.
+
 ## Prerequesites
 
-Nordic Semiconductors have chosen Zephyr for firmware development on the
-nRF9160. The build tool for Zephyr relies on python. To produce a determnistic
-build, we've created a Pipfile for [pipenv][1] with all the pip dependencies
-from the [different][2] [Zephyr][3] [repositories][4]. Currently it's based on
-[nRF Connect SDK][5] v1.1.0.
-
+* The [nRF9160 DK](https://shop.exploratory.engineering/collections/nb-iot/products/nrf9160-dev-kit) module with Telenor SIM card
+* Micro-USB cable
 * [nRF Connect for desktop](https://www.nordicsemi.com/Software-and-tools/Development-Tools/nRF-Connect-for-desktop) v3.3.0 (or newer)
     * Install and open the Getting started assistant
     * Follow all the steps in «Install the toolchain»
@@ -56,24 +64,76 @@ from the [different][2] [Zephyr][3] [repositories][4]. Currently it's based on
 
 ## Setup MacOS/Linux/Windows
 
-1. `git clone https://github.com/ExploratoryEngineering/nrf9160-telenor`
-1. `pipenv install` # install python dependencies in projects virtualenv
-1. `pipenv run west update` # download the Zephyr dependencies using west
+```sh
+git clone https://github.com/ExploratoryEngineering/nrf9160-telenor
+pipenv install # install python dependencies in projects virtualenv
+pipenv run west update # download the Zephyr dependencies using west
+```
 
-## Build and run samples MacOS/Linux
+## Samples
 
-1. `pipenv shell` # activate the projects virtualenv
-1. `west build samples/hello_world` # build the hello world sample
-1. `west flash` # flash the nrf9160 with the built binary
+### Hello world
 
-_Note: The default board is the nRF9160 Development Kit. If you want to build and upload to another nrf9160-based board, you have to add `-b <board-name>` for the build command above. So to build for the Thingy:91, the command would be: `west build -b nrf9160_pca20035ns samples/hello_world`_
+Finally, we can get down to the business of sending data over NB-IoT. Before running the example application, you should follow the instructions from another of our tutorials to install a [serial terminal application][9].  This way, you can see the serial output of the application – which is not only convenient for seeing log output but also necessary for you to obtain the IMEI and IMSI of the device, both of which are needed in order to register the device on the NB-IoT Developer Platform.
 
-## Build and run samples Windows PowerShell
+Once you have your serial terminal application open and connected, and you have connected the nRF9160 DK to your computer via USB, build and flash the example application to the nRF9160 DK.
 
-1. `pipenv shell` # activate the projects virtualenv
-1. `west build .\samples\hello_world` # build the hello world sample
-1. `west flash` # flash the nrf9160 with the built binary
+#### Build and run hello_world
 
+```sh
+pipenv run west build samples/hello_world # build the hello world sample
+pipenv run west flash # flash the nrf9160 with the built binary
+```
+
+_Note: The default board is the nRF9160 Development Kit. If you want to build and upload to another nrf9160-based board, you have to add `-b <board-name>` for the build command above. So to build for the Thingy:91, the command would be: `pipenv run  west build -b nrf9160_pca20035ns samples/hello_world`_
+
+Once the application is flashed to the device, it will immediately begin running.  In your serial terminal application you will see a lot of output about Zephyr booting, then possibly some delay, and then you will see the following application output:
+
+	Example application started.
+	IMEI: <imei>
+	IMSI: <imsi>
+
+At this point, the application will try to connect to the IoT network, but it will not succeed because the device is not yet registered on the NB-IoT Developer Platform.  Now is the time to copy the IMEI and IMSI and register the device as described in the [Getting Started][10] tutorial.
+
+After registering the device, restart the application by pressing the RESET button on the nRF9160 DK. You will see the same output as before, but after some time (15-20 seconds, be patient!) you will additionally see that the device connected to the network and sent a message.  On the device page on the Developer Platform you will also see that the message has been successfully transmitted.
+
+Well done!
+
+
+### Firmware Over The Air (fota)
+
+_Note: If you haven't registered the device in the Telenor IoT Gateway, follow the [Hello world](#hello-world) instructions first._
+
+Before deploying a device into the field, you probably want to have a way to update it without someone having to manually get to the device and install a new firmware change. The [Telenor IoT Gateway][7] has implemented the firmware update part of LwM2M standard to simplify the process of firmware updates. This sample implements the minimum of what you need on the device side to do a firwmare update over the air. Full details of [how to do a firmware update is documented on our blog][8].
+
+#### Clean build folder
+
+If you've already built the [Hello world](#hello-world) sample, you'll get build errors because the `build/` folder contains files from a different source directory. So we need to clean the `build/` folder before building a different sample.
+
+```sh
+# macOS/Linux clean old build folder
+rm -rf build # clean the build folder (in case you built hello_world first)
+
+# Windows clean old build folder
+rd /s /q build
+```
+
+#### Build and run fota
+
+```sh
+pipenv run west build samples/fota # build the hello world sample
+pipenv run west flash # flash the nrf9160 with the built binary
+```
+
+_Note: The default board is the nRF9160 Development Kit. If you want to build and upload to another nrf9160-based board, you have to add `-b <board-name>` for the build command above. So to build for the Thingy:91, the command would be: `west build -b nrf9160_pca20035ns samples/fota`_
+
+#### Build and run fota Windows PowerShell
+
+```sh
+rd /s /q build
+pipenv run west build .\samples\fota # build the hello world sample
+pipenv run west flash # flash the nrf9160 with the built binary
+```
 
 ## Build and debug with Visual Studio Code
 
@@ -123,8 +183,8 @@ We've included configuration to make it possible to build the samples and debug 
 First, let me explain an important feature in West (Zephyrs build tool). When you build an application/sample using west, the output will be in the `build` folder of the current working directory.
 
 Say you've cloned this project into `~/nrf9160-telenor`:
-* If you run `west build samples/hello_world` from `~/nrf9160-telenor`, the output will be in `~/nrf9160-telenor/build`. It will also store what path you used when building. So if you now just run `west build` without specifying a path, it will still build `hello_world`. If you want to switch sample, you have to run `west build -t pristine` or delete the `build` folder.
-* If you `cd` into the `samples/hello_world` folder and run `west build` there, it will output the build folder to `samples/hello_world/build`.
+* If you run `pipenv run west build samples/hello_world` from `~/nrf9160-telenor`, the output will be in `~/nrf9160-telenor/build`. It will also store what path you used when building. So if you now just run `west build` without specifying a path, it will still build `hello_world`. If you want to switch sample, you have to [clean the `build/` folder](#clean-build-folder) first.
+* If you `cd` into the `samples/hello_world` folder and run `pipenv run west build` there, it will output the build folder to `samples/hello_world/build`.
 
 Both methods work fine, but the [tasks](https://code.visualstudio.com/docs/editor/tasks) we've defined in VS Code always build from the project root folder. Then we only need to duplicate the `build ...` task for each sample, and the `flash` and `debug` assume you've already ran the build task first.
 
@@ -135,8 +195,12 @@ Both methods work fine, but the [tasks](https://code.visualstudio.com/docs/edito
 The amount of config options for Zephyr can be quite daunting, but they actually have a command line user interface that allows you to browse the config options interactiely. Either navigate using arrow keys or search using the <key>`/`</key> key. When you find the right options, write down the name and value. Alternatively save a minimal config with the <key>`D`</key> key to a temporary file, then copy the options over to `prj.conf`.
 
 ```sh
-    west build -t menuconfig samples/hello_world
+pipenv run west build -t menuconfig samples/hello_world
 ```
+
+### pipenv shell
+
+If you get tired of typing `pipenv run` before every `west` command, you can run `pipenv shell` first. This will create a new shell that activates the pipenv virtualenv. Just remember to exit before you us the shell for other things.
 
 ## Troubleshooting
 
@@ -157,3 +221,8 @@ build.
 [3]: https://github.com/NordicPlayground/fw-nrfconnect-zephyr/blob/master/scripts/requirements.txt
 [4]: https://github.com/NordicPlayground/fw-nrfconnect-mcuboot/blob/master/scripts/requirements.txt
 [5]: https://github.com/NordicPlayground/fw-nrfconnect-zephyr
+[6]: https://www.nordicsemi.com/Software-and-Tools/Software/nRF-Connect-SDK
+[7]: https://nbiot.engineering/
+[8]: https://blog.exploratory.engineering/post/something-in-the-air/
+[9]: https://docs.nbiot.engineering/tutorials/interactive-terminal.html#serial-terminal-application
+[10]: https://docs.nbiot.engineering/tutorials/getting-started.html
