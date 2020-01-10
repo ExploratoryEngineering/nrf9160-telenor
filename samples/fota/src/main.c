@@ -10,7 +10,7 @@ void main() {
 		manufacturer: "Exploratory Engineering",
 		model_number: "EE-FOTA-00",
 		serial_number: "1",
-		firmware_version: "1.0.0",
+		firmware_version: CONFIG_APP_FIRMWARE_VERSION,
 	};
 
 	int ret = fota_init(client_info);

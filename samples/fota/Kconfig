@@ -1,5 +1,11 @@
 menu "Application"
 
+config APP_FIRMWARE_VERSION
+	string "The application firmware version"
+	default "0.0.0"
+	help
+	  Should match the version of a firmware image uploaded to https://api.nbiot.engineering/.
+
 module = APP
 module-dep = LOG
 module-str = Log level for application

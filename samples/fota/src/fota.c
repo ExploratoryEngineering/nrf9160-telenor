@@ -1,11 +1,12 @@
 #include <zephyr.h>
+#include <bsd.h>
 #include <logging/log.h>
 #include <dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
 #include <misc/reboot.h>
 #include <modem_info.h>
+#include <net/bsdlib.h>
 #include <net/lwm2m.h>
-#include <settings/settings.h>
 #include <stdio.h>
 
 #include "fota.h"
@@ -16,60 +17,27 @@ LOG_MODULE_REGISTER(app_fota, CONFIG_APP_LOG_LEVEL);
 #define FLASH_AREA_IMAGE_SECONDARY PM_MCUBOOT_SECONDARY_ID
 #define FLASH_BANK_SIZE            PM_MCUBOOT_SECONDARY_SIZE
 
-static bool updating;
-
-static int handle_setting_set(const char *key, size_t len_rd, settings_read_cb read_cb, void *cb_arg) {
-	if (!key) {
-		return -ENOENT;
-	}
-
-	if (strcmp(key, "updating") == 0) {
-		int len = read_cb(cb_arg, &updating, sizeof(updating));
-		if (len < sizeof(updating)) {
-			LOG_ERR("read updating state");
-			updating = false;
-		}
-
-		return 0;
-	}
-
-	return -ENOENT;
-}
-
-static struct settings_handler fota_settings = {
-	.name = "fota",
-	.h_set = handle_setting_set,
-};
-
-static int settings_init() {
-	int err = settings_subsys_init();
-	if (err) {
-		LOG_ERR("settings_subsys_init: %d", err);
+static int check_modem_firmware_update() {
+	// Modem firmware updates require a second reboot.
+	int err = bsdlib_get_init_ret();
+	switch (err) {
+	case MODEM_DFU_RESULT_OK:
+		LOG_INF("Modem firmware update successful!");
+		LOG_INF("Modem will run the new firmware after reboot");
+		sys_reboot(0);
+		break;
+	case MODEM_DFU_RESULT_UUID_ERROR:
+	case MODEM_DFU_RESULT_AUTH_ERROR:
+		LOG_ERR("Modem firmware update failed");
+		LOG_ERR("Modem will run non-updated firmware after reboot.");
+		sys_reboot(0);
+		break;
+	case MODEM_DFU_RESULT_HARDWARE_ERROR:
+	case MODEM_DFU_RESULT_INTERNAL_ERROR:
+		LOG_ERR("Modem firmware update failed: %d", err);
 		return err;
 	}
-
-	err = settings_register(&fota_settings);
-	if (err) {
-		LOG_ERR("settings_register: %d", err);
-		return err;
-	}
-
-	err = settings_load_subtree("fota");
-	if (err) {
-		LOG_ERR("settings_load: %d", err);
-		return err;
-	}
-
 	return 0;
-}
-
-static bool fota_updating() {
-	return updating;
-}
-
-static int fota_set_updating(bool updating_) {
-	updating = updating_;
-	return settings_save_one("fota/updating", &updating, sizeof(updating));
 }
 
 static struct k_delayed_work reboot_work;
@@ -85,12 +53,6 @@ static void do_reboot(struct k_work *work) {
 
 static int firmware_update_cb(u16_t obj_inst_id) {
 	LOG_INF("Executing firmware update");
-
-	int ret = fota_set_updating(true);
-	if (ret) {
-		LOG_ERR("set firmware updating state: %d", ret);
-		return ret;
-	}
 
 	// Wait a few seconds before rebooting so that the lwm2m client has a chance
 	// to acknowledge having received the Update signal.
@@ -240,30 +202,14 @@ static int init_lwm2m_resources(fota_client_info client_info) {
 }
 
 static int init_image() {
-	if (fota_updating()) {
-		int ret = fota_set_updating(false);
+	if (!boot_is_img_confirmed()) {
+		int ret = boot_write_img_confirmed();
 		if (ret) {
-			LOG_ERR("set firmware updating state: %d", ret);
+			LOG_ERR("confirm image: %d", ret);
 			return ret;
 		}
 
-		// If we are updating but have booted into a confirmed image, it means
-		// the test reboot failed and we have reverted to the old image.
-		// TODO: Do a different check when updating modem firmware.
-		if (boot_is_img_confirmed()) {
-			LOG_ERR("Firmware update failed");
-			lwm2m_engine_set_u8("5/0/5", RESULT_UPDATE_FAILED);
-			return 0;
-		}
-
-		LOG_INF("Firmware update succeeded");
-		lwm2m_engine_set_u8("5/0/5", RESULT_SUCCESS);
-	}
-
-	int ret = boot_write_img_confirmed();
-	if (ret) {
-		LOG_ERR("confirm image: %d", ret);
-		return ret;
+		LOG_INF("Confirmed firmware image.");
 	}
 
 	return 0;
@@ -298,12 +244,12 @@ static int init_endpoint_name() {
 }
 
 int fota_init(fota_client_info client_info) {
-	int ret = settings_init();
+	int ret = check_modem_firmware_update();
 	if (ret) {
-		LOG_ERR("fota_settings_init: %d", ret);
+		LOG_ERR("check_modem_firmware_update: %d", ret);
 		return ret;
 	}
-
+	
 	ret = init_lwm2m_resources(client_info);
 	if (ret) {
 		LOG_ERR("init_lwm2m_resources: %d", ret);
