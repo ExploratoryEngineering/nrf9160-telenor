@@ -11,7 +11,7 @@
 
 #include "fota.h"
 
-LOG_MODULE_REGISTER(app_fota, CONFIG_FOTA_LOG_LEVEL);
+LOG_MODULE_REGISTER(app_fota, CONFIG_APP_LOG_LEVEL);
 
 #include "pm_config.h"
 #define FLASH_AREA_IMAGE_SECONDARY PM_MCUBOOT_SECONDARY_ID
