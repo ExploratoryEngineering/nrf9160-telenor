@@ -13,10 +13,10 @@ Now, modify the firmware version on the command line (or by editing [prf.conf](p
 
 ```sh
 west build -- -DAPP_FIRMWARE_VERSION="1.0.1"
-curl -HX-API-Token:<token> -F image=@build/zephyr/app_update.bin                        https://api.nbiot.telenor.io/collections/<collection-id>/firmware
-curl -HX-API-Token:<token> -XPATCH -d'{"version": "1.0.1"}'                             https://api.nbiot.telenor.io/collections/<collection-id>/firmware/<firmware-id>
-curl -HX-API-Token:<token> -XPATCH -d'{"firmware": {"management": "device"}}'           https://api.nbiot.telenor.io/collections/<collection-id>
-curl -HX-API-Token:<token> -XPATCH -d'{"firmware": {"targetVersion": "<firmware-id>"}}' https://api.nbiot.telenor.io/collections/<collection-id>/devices/<device-id>
+curl -HX-API-Token:<token> -F image=@build/zephyr/app_update.bin                           https://api.nbiot.telenor.io/collections/<collection-id>/firmware
+curl -HX-API-Token:<token> -XPATCH -d'{"version": "1.0.1"}'                                https://api.nbiot.telenor.io/collections/<collection-id>/firmware/<firmware-id>
+curl -HX-API-Token:<token> -XPATCH -d'{"firmware": {"management": "device"}}'              https://api.nbiot.telenor.io/collections/<collection-id>
+curl -HX-API-Token:<token> -XPATCH -d'{"firmware": {"targetFirmwareId": "<firmware-id>"}}' https://api.nbiot.telenor.io/collections/<collection-id>/devices/<device-id>
 ```
 
 with `<token>`, `<collection-id>`, `<device-id>`, and `<firmware-id>` replaced by appropriate values.  The output of the first `curl` command will give you the `<firmware-id>` you need.
