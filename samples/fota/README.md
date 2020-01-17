@@ -12,7 +12,8 @@ west flash
 Now, modify the firmware version on the command line (or by editing [prf.conf](prj.conf)), build again (but don't flash!), upload the image to the Telenor IoT Gateway, and mark the device for upgrade, as follows:
 
 ```sh
-west build -- -DAPP_FIRMWARE_VERSION="1.0.1"
+rm -rf build  # unfortunately necessary, or Zephyr will not see the version change
+west build -- -DCONFIG_APP_FIRMWARE_VERSION=\"1.0.1\"
 curl -HX-API-Token:<token> -F image=@build/zephyr/app_update.bin                           https://api.nbiot.telenor.io/collections/<collection-id>/firmware
 curl -HX-API-Token:<token> -XPATCH -d'{"version": "1.0.1"}'                                https://api.nbiot.telenor.io/collections/<collection-id>/firmware/<firmware-id>
 curl -HX-API-Token:<token> -XPATCH -d'{"firmware": {"management": "device"}}'              https://api.nbiot.telenor.io/collections/<collection-id>
