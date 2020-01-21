@@ -58,7 +58,7 @@ jobs:
     - name: Install pipenv
       run: |
         python -m pip install -I 'pip==19.3.1'
-        pip3 install pipenv
+        pip3 install -I 'pipenv==2018.11.26'
 
     - name: Install Python dependencies
       run: pipenv install
