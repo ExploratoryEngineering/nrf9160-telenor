@@ -167,27 +167,6 @@
       "gcc-arm-none-eabi-83": {
         "version": "20190709",
         "bottle": false
-      },
-      "rust": {
-        "version": "1.40.0",
-        "bottle": {
-          "cellar": ":any",
-          "prefix": "/usr/local",
-          "files": {
-            "catalina": {
-              "url": "https://homebrew.bintray.com/bottles/rust-1.40.0.catalina.bottle.tar.gz",
-              "sha256": "d32d463310da37b3cd5165e6def90159e8d223ffb4c2b8414dbda6eaf3f1e852"
-            },
-            "mojave": {
-              "url": "https://homebrew.bintray.com/bottles/rust-1.40.0.mojave.bottle.tar.gz",
-              "sha256": "37eb20eafba9ed6bdfc40ee96b0638c5e44c80e6d5a10d0431bbf0ea20c5bd6a"
-            },
-            "high_sierra": {
-              "url": "https://homebrew.bintray.com/bottles/rust-1.40.0.high_sierra.bottle.tar.gz",
-              "sha256": "2768bdee84510629baba7f6a44cf0919bfe115d7971fdb917880fcbb8992bf51"
-            }
-          }
-        }
       }
     },
     "cask": {
@@ -203,7 +182,7 @@
         "HOMEBREW_PREFIX": "/usr/local",
         "Homebrew/homebrew-core": "fdb53d63f26e50e5e56078f19c948872fedaedf5",
         "CLT": "10.3.0.0.1.1562985497",
-        "Xcode": "11.3.1",
+        "Xcode": "11.3",
         "macOS": "10.14.6"
       }
     }
