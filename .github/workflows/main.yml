@@ -112,3 +112,10 @@ jobs:
         pipenv run west build
         popd
   
+    - name: Build coap sample
+      env:
+        GNUARMEMB_TOOLCHAIN_PATH: ${{ env[format('GNUARMEMB_TOOLCHAIN_PATH_{0}', runner.os)] }}
+      run: |
+        pushd samples/coap
+        pipenv run west build
+        popd
