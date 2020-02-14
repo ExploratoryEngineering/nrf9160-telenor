@@ -393,11 +393,11 @@ void post_handler(void *p, int err, struct coap_packet *response) {
 		data->ret = err;
 	} else {
 		data->ret = coap_header_get_code(response);
-	}
 
-	err = coap_endpoint_acknowledge(data->ep, response, data->addr, data->addr_len);
-	if (err != 0) {
-		LOG_ERR("coap_endpoint_acknowledge: %d", err);
+		err = coap_endpoint_acknowledge(data->ep, response, data->addr, data->addr_len);
+		if (err != 0) {
+			LOG_ERR("coap_endpoint_acknowledge: %d", err);
+		}
 	}
 
 	k_sem_give(&data->sem);

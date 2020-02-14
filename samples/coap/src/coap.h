@@ -11,6 +11,10 @@ coap_endpoint *coap_endpoint_init(struct sockaddr *local_addr, socklen_t local_a
 // A coap_response_handler is called when a response is received or an error occurs.
 // The response packet is freed after the handler returns, so the handler must copy any data it wants to retain.
 // It is the responsibility of the response handler to acknowledge or reject the response.
+// The error code may be:
+//   -EAGAIN    if an acknowledgement was never received for a Confirmable message
+//   -ECANCELED if the remote endpoint sent a Reset message
+//   -ENOMEM    if the endpoint could not allocate memory
 typedef void (*coap_response_handler)(void *handler_data, int err, struct coap_packet *response);
 
 // coap_endpoint_post performs a POST request towards the given address with the given path and payload.
