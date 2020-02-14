@@ -117,10 +117,11 @@ static inflight_packet *new_inflight_packet(coap_endpoint *ep, packet_tx_data_it
 }
 
 static void free_inflight_packet(coap_endpoint *ep, inflight_packet *inflight) {
+	k_free(inflight->packet.data);
 	for (int i = 0; i < ep->inflight_packets_len; i++) {
 		if (&ep->inflight_packets[i] == inflight) {
 			ep->inflight_packets_len--;
-			memcpy(&ep->inflight_packets[i], &ep->inflight_packets[ep->inflight_packets_len], sizeof(inflight_packet));
+			ep->inflight_packets[i] = ep->inflight_packets[ep->inflight_packets_len];
 			return;
 		}
 	}
@@ -188,6 +189,7 @@ static void transmit_packet(packet_tx_data_item *tx, coap_endpoint *ep, int sock
 
 	if (coap_header_get_type(&tx->packet) != COAP_TYPE_CON) {
 		k_free(tx->packet.data);
+		tx->packet.data = NULL;
 		if (!is_request(&tx->packet)) {
 			free_inflight_packet(ep, inflight);
 		}
