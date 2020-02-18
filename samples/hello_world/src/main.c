@@ -75,8 +75,11 @@ bool send_message(const char *message) {
 }
 
 void main() {
+	printf("Example application started\n"); 
+
 	print_imei_imsi();
 
+	printf("Connecting...\n"); 
 	int ret = lte_lc_init_and_connect();
 	if (ret != 0) {
 		printf("lte_lc_init_and_connect failed\n");
