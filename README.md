@@ -3,8 +3,9 @@
 This repository includes a few sample applications to help get you started with using the nRF9160 with the [Telenor IoT Gateway][7] which, as of January 2020, is only enabled for Telenor Norway.
 
 **Samples included**
-- hello_world - Get device online and send `Hello, World!`
-- fota - Bare bones example of [Firmware Over The Air][8] updates
+- [hello_world](samples/hello_world) - Get device online and send `Hello, World!`.
+- [fota](samples/fota) - Bare bones example of [Firmware Over The Air][8] updates.
+- [coap](samples/coap) - CoAP client and server.
 
 ## Development Environment
 
@@ -17,7 +18,7 @@ all the pip dependencies from the [different][2] [Zephyr][3] [repositories][4]. 
 
 You are welcome to follow Nordic's [instructions][6] for setting up the nRF Connect SDK, but we beleive our instuctions are easier and more reliable.
 
-## Prerequesites
+## Prerequisites
 
 * The [nRF9160 DK](https://shop.exploratory.engineering/collections/nb-iot/products/nrf9160-dev-kit) module with Telenor SIM card
 * Micro-USB cable
@@ -71,70 +72,13 @@ pipenv install # install python dependencies in projects virtualenv
 pipenv run west update # download the Zephyr dependencies using west
 ```
 
-## Samples
+## Serial terminal application
 
-### Hello world
+In order to see the output from the sample applications, follow our tutorial to install a [serial terminal application](https://docs.nbiot.engineering/tutorials/interactive-terminal.html#serial-terminal-application).
 
-Finally, we can get down to the business of sending data over NB-IoT. Before running the example application, you should follow the instructions from another of our tutorials to install a [serial terminal application][9]. This way, you can see the serial output of the application – which is not only convenient for seeing log output but also necessary for you to obtain the IMEI and IMSI of the device, both of which are needed in order to register the device on the NB-IoT Developer Platform.
+## Register your device
 
-Once you have your serial terminal application open and connected, and you have connected the nRF9160 DK to your computer via USB, build and flash the example application to the nRF9160 DK.
-
-#### Build and run hello_world
-
-```sh
-pipenv run west build samples/hello_world # build the hello world sample
-pipenv run west flash # flash the nrf9160 with the built binary
-```
-
-_Note: The default board is the nRF9160 Development Kit. If you want to build and upload to another nrf9160-based board, you have to add `-b <board-name>` for the build command above. So to build for the Thingy:91, the command would be: `pipenv run  west build -b nrf9160_pca20035ns samples/hello_world`_
-
-Once the application is flashed to the device, it will immediately begin running. In your serial terminal application you will see a lot of output about Zephyr booting, then possibly some delay, and then you will see the following application output:
-
-	Example application started.
-	IMEI: <imei>
-	IMSI: <imsi>
-
-At this point, the application will try to connect to the IoT network, but it will not succeed because the device is not yet registered on the NB-IoT Developer Platform. Now is the time to copy the IMEI and IMSI and register the device as described in the [Getting Started][10] tutorial.
-
-After registering the device, restart the application by pressing the RESET button on the nRF9160 DK. You will see the same output as before, but after some time (15-20 seconds, be patient!) you will additionally see that the device connected to the network and sent a message. On the device page on the Developer Platform you will also see that the message has been successfully transmitted.
-
-Well done!
-
-
-### Firmware Over The Air (fota)
-
-_Note: If you haven't registered the device in the Telenor IoT Gateway, follow the [Hello world](#hello-world) instructions first._
-
-Before deploying a device into the field, you probably want to have a way to update it without someone having to manually get to the device and install a new firmware change. The [Telenor IoT Gateway][7] has implemented the firmware update part of LwM2M standard to simplify the process of firmware updates. This sample implements the minimum of what you need on the device side to do a firwmare update over the air. Full details of [how to do a firmware update is documented on our blog][8].
-
-#### Clean build folder
-
-If you've already built the [Hello world](#hello-world) sample, you'll get build errors because the `build/` folder contains files from a different source directory. So we need to clean the `build/` folder before building a different sample.
-
-```sh
-# macOS/Linux clean old build folder
-rm -rf build # clean the build folder (in case you built hello_world first)
-
-# Windows clean old build folder
-rd /s /q build
-```
-
-#### Build and run fota
-
-```sh
-pipenv run west build samples/fota # build the hello world sample
-pipenv run west flash # flash the nrf9160 with the built binary
-```
-
-_Note: The default board is the nRF9160 Development Kit. If you want to build and upload to another nrf9160-based board, you have to add `-b <board-name>` for the build command above. So to build for the Thingy:91, the command would be: `west build -b nrf9160_pca20035ns samples/fota`_
-
-#### Build and run fota Windows PowerShell
-
-```sh
-rd /s /q build
-pipenv run west build .\samples\fota # build the hello world sample
-pipenv run west flash # flash the nrf9160 with the built binary
-```
+Follow the [Getting Started](https://docs.nbiot.engineering/tutorials/getting-started.html) tutorial so that your device can get online.
 
 ## Build and debug with Visual Studio Code
 
@@ -225,5 +169,3 @@ build.
 [6]: https://www.nordicsemi.com/Software-and-Tools/Software/nRF-Connect-SDK
 [7]: https://nbiot.engineering/
 [8]: https://blog.exploratory.engineering/post/something-in-the-air/
-[9]: https://docs.nbiot.engineering/tutorials/interactive-terminal.html#serial-terminal-application
-[10]: https://docs.nbiot.engineering/tutorials/getting-started.html
