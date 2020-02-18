@@ -8,8 +8,6 @@ if(NOT DEFINED BOARD)
   set(BOARD nrf9160_pca10090ns)
 endif()
 
-message(STATUS "ZEPHYR_BASE '$ENV{ZEPHYR_BASE}'")
-
 #Include nrf boilerplate
 get_filename_component(NRF_BASE $ENV{ZEPHYR_BASE}/../nrf ABSOLUTE)
 include(${NRF_BASE}/cmake/boilerplate.cmake)
