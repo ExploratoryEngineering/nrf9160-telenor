@@ -5,12 +5,32 @@
 #include <errno.h>
 #include <stdio.h>
 #include <net/socket.h>
+#include <lte_lc.h>
 #include <modem_info.h>
 
 bool print_imei_imsi() {
 	if (modem_info_init() != 0) {
 		printf("Modem info could not be initialized");
 		return false;
+	}
+
+	int ret = lte_lc_normal();
+	if (ret != 0) {
+		printf("lte_lc_normal: %d\n", ret);
+		return false;
+	}
+
+	while (true) {
+		u16_t uicc_state;
+		int len = modem_info_short_get(MODEM_INFO_UICC, &uicc_state);
+		if (len <= 0) {
+			printf("Failed reading UICC: %d\n", len);
+			return false;
+		}
+		if (uicc_state == 1) {
+			break;
+		}
+		k_sleep(K_SECONDS(1));
 	}
 
 	u8_t buf[32] = {0};
@@ -56,6 +76,12 @@ bool send_message(const char *message) {
 
 void main() {
 	print_imei_imsi();
+
+	int ret = lte_lc_init_and_connect();
+	if (ret != 0) {
+		printf("lte_lc_init_and_connect failed\n");
+		return;
+	}
 
 	if (send_message("Hello, World!")) {
 		printf("Message sent!\n"); 
