@@ -80,9 +80,9 @@ void main() {
 	print_imei_imsi();
 
 	printf("Connecting...\n"); 
-	int ret = lte_lc_init_and_connect();
-	if (ret != 0) {
-		printf("lte_lc_init_and_connect failed\n");
+	int err = lte_lc_init_and_connect();
+	if (err != 0) {
+		printf("lte_lc_init_and_connect failed: %d\n", err);
 		return;
 	}
 
