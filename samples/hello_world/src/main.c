@@ -48,6 +48,12 @@ bool print_imei_imsi() {
 	}
 	printf("IMSI: %s\n", buf);
 
+	ret = lte_lc_offline();
+	if (ret != 0) {
+		printf("lte_lc_offline: %d\n", ret);
+		return false;
+	}
+
 	return true;
 }
 
@@ -77,12 +83,18 @@ bool send_message(const char *message) {
 void main() {
 	printf("Example application started\n"); 
 
+	int err = lte_lc_init();
+	if (err != 0) {
+		printf("lte_lc_init failed: %d\n", err);
+		return;
+	}
+
 	print_imei_imsi();
 
 	printf("Connecting...\n"); 
-	int err = lte_lc_init_and_connect();
+	err = lte_lc_connect();
 	if (err != 0) {
-		printf("lte_lc_init_and_connect failed: %d\n", err);
+		printf("lte_lc_connect failed: %d\n", err);
 		return;
 	}
 
