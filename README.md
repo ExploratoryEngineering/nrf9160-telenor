@@ -159,7 +159,7 @@ Sometimes when changing dependency versions, the cache can cause build errors.
 Deleting it doesn't do any damage, it just increases the build time on the next
 build.
 
-    rm -rf ~/Library/Caches/zephyr/ToolchainCapabilityDatabase
+    rm -rf ~/Library/Caches/zephyr
 
 [1]: https://pipenv-fork.readthedocs.io/en/latest/
 [2]: https://github.com/NordicPlayground/fw-nrfconnect-nrf/blob/master/scripts/requirements.txt
