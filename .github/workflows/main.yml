@@ -45,7 +45,7 @@ jobs:
           mkdir downloads
           wget -P ./downloads -nv http://mirrors.kernel.org/ubuntu/pool/main/d/device-tree-compiler/device-tree-compiler_1.4.7-3_amd64.deb
           wget -P ./downloads -nv https://github.com/Kitware/CMake/releases/download/v3.16.2/cmake-3.16.2-Linux-x86_64.tar.gz
-          sudo wget -P ./downloads -nv https://developer.arm.com/-/media/Files/downloads/gnu-rm/8-2019q3/RC1.1/gcc-arm-none-eabi-8-2019-q3-update-linux.tar.bz2
+          sudo wget -P ./downloads -nv https://s3-eu-west-1.amazonaws.com/resources.exploratory.engineering/gcc-arm-none-eabi-8-2019-q3-update-linux.tar.bz2
         fi
 
         # install device-tree-compiler
@@ -72,7 +72,7 @@ jobs:
           Write-Host "Cached downloads missing. Downloading..."
           mkdir downloads
           $ProgressPreference = 'SilentlyContinue'
-          Invoke-WebRequest https://developer.arm.com/-/media/Files/downloads/gnu-rm/8-2019q3/RC1.1/gcc-arm-none-eabi-8-2019-q3-update-win32.zip -OutFile downloads\gcc-arm-none-eabi-8-2019-q3-update-win32.zip -TimeoutSec 180
+          Invoke-WebRequest https://s3-eu-west-1.amazonaws.com/resources.exploratory.engineering/gcc-arm-none-eabi-8-2019-q3-update-win32.zip -OutFile downloads\gcc-arm-none-eabi-8-2019-q3-update-win32.zip -TimeoutSec 180
         }
 
         # gcc-arm-none-eabi
