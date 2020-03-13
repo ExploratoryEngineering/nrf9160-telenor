@@ -9,7 +9,7 @@ allow_prereleases = true
 [dev-packages]
 
 [packages]
-west = ">=0.6.3, <0.7.0"
+west = "==0.6.3"
 windows-curses = {version = "*",sys_platform = "== 'win32'"}
 breathe = ">=4.9.1"
 colorama = "*"
