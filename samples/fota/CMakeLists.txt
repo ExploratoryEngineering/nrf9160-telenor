@@ -6,7 +6,7 @@ endif()
 
 # Add custom signing key to the bootloader (mcuboot) config
 set(mcuboot_CONF_FILE
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../deps/mcuboot/boot/zephyr/prj.conf
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../deps/bootloader/mcuboot/boot/zephyr/prj.conf
   ${CMAKE_CURRENT_SOURCE_DIR}/mcuboot.conf
 )
 
