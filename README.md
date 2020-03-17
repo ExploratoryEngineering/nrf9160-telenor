@@ -1,6 +1,6 @@
 # Telenor nrf9160 samples
 
-This repository includes a few sample applications to help get you started with using the nRF9160 with the [Telenor IoT Gateway][7] which, as of January 2020, is only enabled for Telenor Norway.
+This repository includes a few sample applications to help get you started with using the nRF9160 with the [Telenor IoT Gateway][7] which, as of March 2020, is only enabled for Telenor Norway.
 
 **Samples included**
 - [hello_world](samples/hello_world) - Get device online and send `Hello, World!`.
@@ -11,12 +11,23 @@ This repository includes a few sample applications to help get you started with 
 
 At the time of the writing, concise and reliable instructions for setting up one's development environment were hard to come by. To reduce the barrier of entry into the IoT market, we've tried to simplify the setup process.
 
-Nordic Semiconductors have chosen Zephyr for firmware development on the nRF9160. The build tool for Zephyr relies on python and many pip dependencies. To produce a determnistic build, we've created a Pipfile for [pipenv][1] with
-all the pip dependencies from the [different][2] [Zephyr][3] [repositories][4]. Currently it's based on [nRF Connect SDK][5] **v1.1.0**.
+Nordic Semiconductor have chosen Zephyr for firmware development on the nRF9160. The build tool for Zephyr relies on python and many pip dependencies. To produce a determnistic build, we've created a Pipfile for [pipenv][1] with
+all the pip dependencies from the [different][2] [Zephyr][3] [repositories][4]. Currently it's based on [nRF Connect SDK][5] **v1.2.0**.
 
 ![](https://github.com/ExploratoryEngineering/nrf9160-telenor/workflows/Build%20Samples/badge.svg)
 
 You are welcome to follow Nordic's [instructions][6] for setting up the nRF Connect SDK, but we beleive our instuctions are easier and more reliable.
+
+### Update instructions
+
+If you previously have set up this project when it was based on nRF Connect SDK v1.1.0, follow these steps to start using v1.2.0:
+
+1. Delete existing build folder(s).
+1. Clear the [Zephyr toolchain capability cache](#clear-zephyr-toolchain-capability-cache).
+1. Run `pipenv install` to install new pip dependencies to the virtualenv.
+1. If you had local modifications, see [the v1.2.0 pull request](https://github.com/ExploratoryEngineering/nrf9160-telenor/pull/10) for API changes in our samples.
+
+You might also want to read the [nRF Connect SDK v1.2.0 Release notes](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.0/nrf/doc/release-notes-1.2.0.html).
 
 ## Prerequisites
 
@@ -159,7 +170,10 @@ Sometimes when changing dependency versions, the cache can cause build errors.
 Deleting it doesn't do any damage, it just increases the build time on the next
 build.
 
-    rm -rf ~/Library/Caches/zephyr
+Delete this folder:
+* Windows: `%LOCALAPPDATA%\.cache\zephyr`
+* MacOS: `~/Library/Caches/zephyr`
+* Linux: either `$XDG_CACHE_HOME/zephyr` or `~/.cache/zephyr`
 
 [1]: https://pipenv-fork.readthedocs.io/en/latest/
 [2]: https://github.com/NordicPlayground/fw-nrfconnect-nrf/blob/master/scripts/requirements.txt
