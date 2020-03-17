@@ -3,7 +3,7 @@
 #include <logging/log.h>
 #include <dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
-#include <misc/reboot.h>
+#include <power/reboot.h>
 #include <modem_info.h>
 #include <net/bsdlib.h>
 #include <net/lwm2m.h>
@@ -67,6 +67,19 @@ static void *firmware_get_buf(u16_t obj_inst_id, u16_t res_id, u16_t res_inst_id
 	return firmware_buf;
 }
 
+static void dfu_target_callback_handler(enum dfu_target_evt_id evt) {
+	switch (evt) {
+	case DFU_TARGET_EVT_TIMEOUT:
+		LOG_INF("dfu_target erase pending");
+		break;
+	case DFU_TARGET_EVT_ERASE_DONE:
+		LOG_INF("dfu_target erase done");
+		break;
+	default:
+		LOG_ERR("dfu_target download error");
+	}
+}
+
 static int firmware_block_received_cb(u16_t obj_inst_id, u16_t res_id, u16_t res_inst_id,
 		u8_t *data, u16_t data_len, bool last_block, size_t total_size) {
 	if (total_size > FLASH_BANK_SIZE) {
@@ -102,7 +115,7 @@ static int firmware_block_received_cb(u16_t obj_inst_id, u16_t res_id, u16_t res
 		}
 		LOG_INF("Started downloading%s image", img_type_str);
 
-		ret = dfu_target_init(img_type, total_size);
+		ret = dfu_target_init(img_type, total_size, dfu_target_callback_handler);
 		if (ret) {
 			LOG_ERR("dfu_target_init(%d, %d): %d", img_type, total_size, ret);
 			return ret;

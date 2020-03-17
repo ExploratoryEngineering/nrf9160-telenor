@@ -24,46 +24,42 @@ manifest:
   projects:
     - name: fw-nrfconnect-nrf
       path: deps/nrf
-      revision: v1.1.0
+      revision: v1.2.0
     - name: fw-nrfconnect-zephyr
       path: deps/zephyr
       west-commands: scripts/west-commands.yml
-      revision: v2.0.99-ncs1
-    - name: nffs
-      revision: bc62a2fa9d98ddb5d633c932ea199bc68e10f194
-      path: deps/modules/fs/nffs
-      remote: zephyrproject
+      revision: v2.1.99-ncs1
     - name: segger
       revision: 6fcf61606d6012d2c44129edc033f59331e268bc
       path: deps/modules/debug/segger
       remote: zephyrproject
     - name: mbedtls
-      repo-path: fw-nrfconnect-mbedtls
       path: deps/modules/crypto/mbedtls
-      revision: c3be1b52f5e56aaba6039c423478cfaf62a91622
+      revision: 3776c158fe138a72c97c187e4d31c81c37884be9
+      remote: zephyrproject
     - name: mcuboot
-      path: deps/mcuboot
+      path: deps/bootloader/mcuboot
       repo-path: fw-nrfconnect-mcuboot
-      revision: v1.4.99-ncs1
+      revision: v1.4.99-ncs2
     - name: mcumgr
       repo-path: fw-nrfconnect-mcumgr
-      revision: f663988d35da559a37f263d369842dbce309d1fa
+      revision: v0.0.1-ncs1
       path: deps/modules/lib/mcumgr
     - name: tinycbor
       repo-path: fw-nrfconnect-tinycbor
       path: deps/modules/lib/tinycbor
-      revision: 86d5ed5dd544b107d2d0882961a19c2c6cb06572
+      revision: 0fc68fceacd1efc1ce809c5880c380f3d98b7b6e
     - name: ci-tools
       path: deps/tools/ci-tools
       remote: zephyrproject
-      revision: e01f3bce2a94847253369efb9a081f5c0e9ec882
+      revision: e869d2524d1344d80063bf2898095faf9228f7b5
     - name: net-tools
       path: deps/tools/net-tools
       remote: zephyrproject
       revision: 30b7efa827b04d2e47840716b0372737fe7d6c92
     - name: nrfxlib
       path: deps/nrfxlib
-      revision: v1.1.0
+      revision: v1.2.0
     - name: cmock
       path: deps/test/cmock
       revision: c243b9a7a7b3c471023193992b46cf1bd1910450
@@ -75,9 +71,13 @@ manifest:
     - name: mbedtls-nrf
       path: deps/mbedtls
       repo-path: mbedtls
-      revision: mbedtls-2.16.3
+      revision: mbedtls-2.16.4
       remote: armmbed
     - name: hal_nordic
       path: deps/modules/hal/nordic
       remote: zephyrproject
-      revision: 1b14177ff2176a1d17f3dd5e7e217f44337255db
+      revision: 12d7647870888e4cb0e421f2b26884c2e76915ac
+    - name: nrf_hw_models
+      path: deps/modules/bsim_hw_models/nrf_hw_models
+      remote: zephyrproject
+      revision: fec69703cb1ca06fcdab6d5fde01274f0fc5c759
