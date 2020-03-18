@@ -92,7 +92,7 @@ jobs:
         python -m pip list
 
     - name: Install Python dependencies
-      run: pipenv install
+      run: pipenv -vv install
 
     - name: Install west dependencies
       run: pipenv run west update
