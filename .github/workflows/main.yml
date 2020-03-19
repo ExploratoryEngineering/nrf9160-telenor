@@ -89,6 +89,7 @@ jobs:
         curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
         python get-pip.py pip==19.3.1
         python -m pip install -I 'pipenv==2018.11.26'
+        python -m pip install -U git+git://github.com/pypa/virtualenv@master
         python -m pip list
 
     - name: Install Python dependencies
