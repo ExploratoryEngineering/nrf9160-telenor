@@ -88,12 +88,22 @@ jobs:
       run: |
         curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
         python get-pip.py pip==19.3.1
-        python -m pip install -I 'pipenv==2018.11.26'
-        python -m pip install -U git+git://github.com/pypa/virtualenv@master
+        python -m pip install --no-deps -I 'pipenv==2018.11.26'
+        python -m pip install --no-deps -I 'virtualenv==20.0.12'
+        python -m pip install --no-deps -I 'virtualenv-clone==0.5.3'
+        python -m pip install --no-deps -I 'appdirs==1.4.3'
+        python -m pip install --no-deps -I 'certifi==2019.11.28'
+        python -m pip install --no-deps -I 'distlib==0.3.0'
+        python -m pip install --no-deps -I 'filelock==3.0.12'
+        python -m pip install --no-deps -I 'importlib-metadata==1.5.0'
+        python -m pip install --no-deps -I 'setuptools==46.0.0'
+        python -m pip install --no-deps -I 'six==1.14.0'
+        python -m pip install --no-deps -I 'wheel==0.34.2'
+        python -m pip install --no-deps -I 'zipp=3.1.0'
         python -m pip list
 
     - name: Install Python dependencies
-      run: pipenv -vv install
+      run: pipenv install
 
     - name: Install west dependencies
       run: pipenv run west update
