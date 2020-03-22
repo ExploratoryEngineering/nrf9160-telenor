@@ -22,8 +22,10 @@ You are welcome to follow Nordic's [instructions][6] for setting up the nRF Conn
 
 If you previously have set up this project when it was based on nRF Connect SDK v1.1.0, follow these steps to start using v1.2.0:
 
+1. `git pull`
 1. Delete existing build folder(s).
 1. Clear the [Zephyr toolchain capability cache](#clear-zephyr-toolchain-capability-cache).
+1. `pipenv run west update`
 1. Run `pipenv install` to install new pip dependencies to the virtualenv.
 1. If you had local modifications, see [the v1.2.0 pull request](https://github.com/ExploratoryEngineering/nrf9160-telenor/pull/10) for API changes in our samples.
 
