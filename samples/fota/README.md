@@ -32,11 +32,23 @@ First you have to generate a private key for signing the firmware images
 pipenv run imgtool keygen --key cert.pem --type rsa-2048
 ```
 
+Then we need to generate a few certificates for signing the bootloader
+
+```sh
+# generate private keys
+openssl ecparam -name prime256v1 -genkey -noout -out mcuboot-priv.pem
+openssl ecparam -name prime256v1 -genkey -noout -out mcuboot-priv2.pem
+
+# get public keys from the private keys
+openssl ec -in mcuboot-priv.pem -pubout -out mcuboot-pub.pem
+openssl ec -in mcuboot-priv2.pem -pubout -out mcuboot-pub2.pem
+```
+
 Build the firmware and flash it to the device by running
 
 ```sh
 pipenv run west build
-pipenv run west flash
+pipenv run west flash --erase # erase is needed if the signing keys doesn't match the public keys in the OTP
 ```
 
 _Note: The default board is the nRF9160 Development Kit. If you want to build and upload to another nrf9160-based board, you have to add `-b <board-name>` for the build command above. So to build for the Thingy:91, the command would be: `west build -b nrf9160_pca20035ns samples/fota`_
@@ -68,3 +80,12 @@ Login to the [Telenor IoT Gateway](https://nbiot.engineering/) and go to the fir
 The device state should change to *Pending*. A firmware upgrade will be triggered on the device the next time it updates its LwM2M registration — which is every 10 minutes, so in the interest of time you might just reboot the device. After it connects to the network and registers with the LwM2M server, it will start to download the image. Now the device state should change to *Downloading*. A couple minutes later, it will reboot with the new firmware and the state should change to *Current*. Et voilà!
 
 ![Firmware details screenshot](img/details.png)
+
+## Bootloader update
+
+Explain:
+- Slots
+- config
+- keys
+
+signed_by_mcuboot_and_b0_s1_image_update.bin

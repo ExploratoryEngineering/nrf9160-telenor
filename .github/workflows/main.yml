@@ -110,6 +110,10 @@ jobs:
       run: |
         pushd samples/fota
         pipenv run imgtool keygen --key cert.pem --type rsa-2048
+        openssl ecparam -name prime256v1 -genkey -noout -out mcuboot-priv.pem
+        openssl ecparam -name prime256v1 -genkey -noout -out mcuboot-priv2.pem
+        openssl ec -in mcuboot-priv.pem -pubout -out mcuboot-pub.pem
+        openssl ec -in mcuboot-priv2.pem -pubout -out mcuboot-pub2.pem
         pipenv run west build
         popd
   

@@ -48,7 +48,8 @@ static void do_reboot(struct k_work *work) {
 		LOG_ERR("boot_request_upgrade: %d", ret);
 	}
 
-	sys_reboot(0);
+	// removed automatic reboot to inspect flash content
+	// sys_reboot(0);
 }
 
 static int firmware_update_cb(u16_t obj_inst_id) {
@@ -176,7 +177,7 @@ cleanup:
 }
 
 static int init_lwm2m_resources(fota_client_info client_info) {
-	LOG_INF("Firmware version: %s", client_info.firmware_version);
+	LOG_INF("Firmware version: %s", log_strdup(client_info.firmware_version));
 	LOG_INF("Model number:     %s", client_info.model_number);
 	LOG_INF("Serial numbera:   %s", client_info.serial_number);
 	LOG_INF("Manufacturer:     %s", client_info.manufacturer);
