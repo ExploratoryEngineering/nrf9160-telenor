@@ -1,5 +1,7 @@
 # Telenor nrf9160 samples
 
+**This library is not under active development anymore. [More details why](https://blog.exploratory.engineering/post/so-long-and-thanks-for-all-the-fish/) and [the implications](https://blog.exploratory.engineering/post/fish-updates/). The source code for [nbiot.engineering](https://nbiot.engineering/) is published to https://github.com/eesrc/horde.**
+
 This repository includes a few sample applications to help get you started with using the nRF9160 with the [Telenor IoT Gateway][7] which, as of March 2020, is only enabled for Telenor Norway.
 
 **Samples included**
